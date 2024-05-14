@@ -90,11 +90,14 @@ except NotFittedError as e:
 
 # Predict and display the result
 if st.button("Predict"):
-    prediction = model.predict(input_data_preprocessed)
-    if prediction[0] == 1:
-        st.write("The patient is likely to have heart disease.")
-    else:
-        st.write("The patient is not likely to have heart disease.")
+    try:
+        prediction = model.predict(input_data_preprocessed)
+        if prediction[0] == 1:
+            st.write("The patient is likely to have heart disease.")
+        else:
+            st.write("The patient is not likely to have heart disease.")
+    except ValueError as e:
+        st.error(f"Prediction error: {e}")
 
 # Add additional sections as needed
 st.header("Application Information")
