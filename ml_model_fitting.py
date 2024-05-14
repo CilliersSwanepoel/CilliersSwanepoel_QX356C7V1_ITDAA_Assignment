@@ -72,5 +72,7 @@ for name, model in models.items():
         best_score = accuracy
         best_model = model
         best_model_name = name
+        
+joblib.dump(best_model, f"{best_model_name}.joblib")
 
 print(f"Best model: {best_model_name} with accuracy: {best_score}")
