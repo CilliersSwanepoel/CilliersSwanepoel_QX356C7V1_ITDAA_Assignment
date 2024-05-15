@@ -6,19 +6,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from xgboost import XGBClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
 import joblib
 
 # Step 1: Data Preprocessing
-
 database_path = 'heart.db'
-conn = sqlite3.connect(database_path)
-
-cleaned_data = pd.read_sql_query("SELECT * FROM heart_data", conn)
-
-conn.close()
+with sqlite3.connect(database_path) as conn:
+    cleaned_data = pd.read_sql_query("SELECT * FROM heart_data", conn)
 
 X = cleaned_data.drop('target', axis=1)
 y = cleaned_data['target']
@@ -49,11 +46,13 @@ X_train, X_test, y_train, y_test = train_test_split(X_preprocessed, y, test_size
 print("Data preprocessing complete.")
 
 # Step 2: Model Selection and Evaluation
-
 models = {
     'Logistic Regression': LogisticRegression(random_state=42),
     'Random Forest': RandomForestClassifier(random_state=42),
-    'SVM': SVC(random_state=42)
+    'Gradient Boosting': GradientBoostingClassifier(random_state=42),
+    'XGBoost': XGBClassifier(random_state=42),
+    'AdaBoost': AdaBoostClassifier(random_state=42),
+    'K-Nearest Neighbors': KNeighborsClassifier()
 }
 
 best_model = None
@@ -65,8 +64,14 @@ for name, model in models.items():
     y_pred = model.predict(X_test)
     report = classification_report(y_test, y_pred, output_dict=True)
     accuracy = report['accuracy']
+    precision = report['weighted avg']['precision']
+    recall = report['weighted avg']['recall']
+    f1_score = report['weighted avg']['f1-score']
     
     print(f"{name} Accuracy: {accuracy}")
+    print(f"{name} Precision: {precision}")
+    print(f"{name} Recall: {recall}")
+    print(f"{name} F1 Score: {f1_score}")
     
     if accuracy > best_score:
         best_score = accuracy
