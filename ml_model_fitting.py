@@ -11,7 +11,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 import joblib
 
-# Step 1: Data Preprocessing
 database_path = 'heart.db'
 with sqlite3.connect(database_path) as conn:
     cleaned_data = pd.read_sql_query("SELECT * FROM heart_data", conn)
@@ -44,7 +43,6 @@ X_train, X_test, y_train, y_test = train_test_split(X_preprocessed, y, test_size
 
 print("Data preprocessing complete.")
 
-# Step 2: Model Training and Evaluation
 models = {
     'K-Nearest Neighbors': KNeighborsClassifier(),
     'Logistic Regression': LogisticRegression(random_state=42),
@@ -74,9 +72,8 @@ for name, model in models.items():
         best_model = model
         best_model_name = name
 
-# Save the best model and preprocessor
-#joblib.dump(best_model, f"{best_model_name}.joblib")
-#joblib.dump(preprocessor, 'preprocessor.joblib')
+joblib.dump(best_model, f"{best_model_name}.joblib")
+joblib.dump(preprocessor, 'preprocessor.joblib')
 
 print(f"Best model: {best_model_name} with accuracy: {best_score}")
 print("Model and preprocessor saved successfully.")

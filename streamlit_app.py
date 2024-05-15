@@ -3,15 +3,12 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# Load the trained model and preprocessor
 model = joblib.load('K-Nearest Neighbors.joblib')
 preprocessor = joblib.load('preprocessor.joblib')
 
-# Title and description
 st.title("Heart Disease Prediction App")
 st.write("Enter the details of the patient to predict the likelihood of heart disease.")
 
-# Input fields
 with st.form("patient_form"):
     age = st.number_input("Age", min_value=0, max_value=120, step=1)
     sex = st.selectbox("Sex", options=["Male", "Female"])
@@ -30,7 +27,7 @@ with st.form("patient_form"):
     submit_button = st.form_submit_button(label='Predict')
 
 if submit_button:
-    # Create a dataframe with the input data
+
     input_data = pd.DataFrame({
         'age': [age],
         'sex': [sex],
@@ -47,7 +44,7 @@ if submit_button:
         'thal': [thal]
     })
 
-    # Map the input data to match the model's expectations
+
     input_data['sex'] = input_data['sex'].map({'Male': 1, 'Female': 0})
     input_data['fbs'] = input_data['fbs'].map({'Yes': 1, 'No': 0})
     input_data['exang'] = input_data['exang'].map({'Yes': 1, 'No': 0})
@@ -57,10 +54,10 @@ if submit_button:
     input_data['thal'] = input_data['thal'].map({"Normal": 1, "Fixed Defect": 2, "Reversible Defect": 3})
 
     try:
-        # Preprocess the input data
+       
         input_data_preprocessed = preprocessor.transform(input_data)
 
-        # Make the prediction
+      
         prediction = model.predict(input_data_preprocessed)
         result = "Heart Disease Detected" if prediction[0] == 1 else "No Heart Disease Detected"
         st.write(f"Prediction: {result}")
