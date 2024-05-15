@@ -5,9 +5,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
-from xgboost import XGBClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
 import joblib
@@ -45,39 +42,23 @@ X_train, X_test, y_train, y_test = train_test_split(X_preprocessed, y, test_size
 
 print("Data preprocessing complete.")
 
-# Step 2: Model Selection and Evaluation
-models = {
-    'Logistic Regression': LogisticRegression(random_state=42),
-    'Random Forest': RandomForestClassifier(random_state=42),
-    'Gradient Boosting': GradientBoostingClassifier(random_state=42),
-    'XGBoost': XGBClassifier(random_state=42),
-    'AdaBoost': AdaBoostClassifier(random_state=42),
-    'K-Nearest Neighbors': KNeighborsClassifier()
-}
+# Step 2: Model Training and Evaluation
+model = KNeighborsClassifier()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+report = classification_report(y_test, y_pred, output_dict=True)
+accuracy = report['accuracy']
+precision = report['weighted avg']['precision']
+recall = report['weighted avg']['recall']
+f1_score = report['weighted avg']['f1-score']
 
-best_model = None
-best_score = 0
-best_model_name = ""
+print(f"K-Nearest Neighbors Accuracy: {accuracy}")
+print(f"K-Nearest Neighbors Precision: {precision}")
+print(f"K-Nearest Neighbors Recall: {recall}")
+print(f"K-Nearest Neighbors F1 Score: {f1_score}")
 
-for name, model in models.items():
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    report = classification_report(y_test, y_pred, output_dict=True)
-    accuracy = report['accuracy']
-    precision = report['weighted avg']['precision']
-    recall = report['weighted avg']['recall']
-    f1_score = report['weighted avg']['f1-score']
-    
-    print(f"{name} Accuracy: {accuracy}")
-    print(f"{name} Precision: {precision}")
-    print(f"{name} Recall: {recall}")
-    print(f"{name} F1 Score: {f1_score}")
-    
-    if accuracy > best_score:
-        best_score = accuracy
-        best_model = model
-        best_model_name = name
-        
-joblib.dump(best_model, f"{best_model_name}.joblib")
+# Save the model and preprocessor
+joblib.dump(model, 'K-Nearest Neighbors.joblib')
+joblib.dump(preprocessor, 'preprocessor.joblib')
 
-print(f"Best model: {best_model_name} with accuracy: {best_score}")
+print("Model and preprocessor saved successfully.")
