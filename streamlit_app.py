@@ -65,3 +65,8 @@ if submit_button:
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
+import sklearn
+import joblib
+
+print(sklearn.__version__)
+print(joblib.__version__)
